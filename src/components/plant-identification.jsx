@@ -33,16 +33,6 @@ const PlantIdentifierApp = () => {
     }
   };
 
-  const handleTakePicture = () => {
-    if (videoRef.current && canvasRef.current) {
-      const context = canvasRef.current.getContext('2d');
-      context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-      const imageUrl = canvasRef.current.toDataURL('image/jpeg');
-      setSelectedImage(imageUrl);
-      setIsCameraActive(false);
-    }
-  };
-
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -57,6 +47,7 @@ const PlantIdentifierApp = () => {
     }
   };
 
+  // Stop camera
   const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject;
@@ -67,6 +58,16 @@ const PlantIdentifierApp = () => {
     setIsCameraActive(false);
   };
 
+  // Take a picture from the video feed
+  const handleTakePicture = () => {
+    if (videoRef.current && canvasRef.current) {
+      const context = canvasRef.current.getContext('2d');
+      context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
+      const imageUrl = canvasRef.current.toDataURL('image/jpeg');
+      setSelectedImage(imageUrl);
+      setIsCameraActive(false);
+    }
+  };
   const identifyPlant = async () => {
     if (!selectedImage) return;
 
@@ -301,6 +302,7 @@ const PlantIdentifierApp = () => {
             </label>
 
             <div className="space-y-4">
+              {/* Start Camera Button */}
               {!isCameraActive && !selectedImage && (
                 <button 
                   onClick={startCamera}
@@ -311,11 +313,13 @@ const PlantIdentifierApp = () => {
                 </button>
               )}
 
+              {/* Active Camera View */}
               {isCameraActive && (
                 <div className="space-y-4">
                   <video
                     ref={videoRef}
                     className="w-full h-96 object-cover rounded-2xl"
+                    playsInline
                     autoPlay
                     muted
                   />
